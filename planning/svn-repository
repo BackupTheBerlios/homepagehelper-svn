@@ -1,0 +1,20 @@
+The repository is set up as described by the following folder tree:
+/
+	/planning
+		all planning files are collected in this folder
+		also the coding guidelines and other important documents are stored here
+	
+	/trunk
+		the development version
+		is set up as described in the file-structure
+		/homepagehelper-src
+	
+	/branches
+		the brnaches for differnt main versions
+		the differnet branches have the same structure as the trunk
+		/1.0
+			/homepagehelper-src
+		/1.1
+			/homepagehelper-src
+	
+	/tags

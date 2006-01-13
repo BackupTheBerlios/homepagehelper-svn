@@ -1,0 +1,46 @@
+HomePageHelper (hph)
+
+HomePageHelper (hph) is a web based content management system which uses php5 and a database.  HomePageHelper is a tool for web developers which makes it as easy as it could be to create a website.
+
+a web based content management system
+- reduced to the minimum
+- library for web pages
+- easy to use
+- support for as many standards as possible
+
+
+features
+- web based administration tool
+- MMB_Editor
+- static content easily editable
+- cache for static content
+- mod_rewrite feature
+- group system comparable to the Pagescript's one
+
+
+technical information
+- written php5
+	- using new php5 features
+		- oop classes with private mehtods
+		- exceptions
+	- singleton classes
+	- iteration for classes if useful
+	- wrappers for classes
+	- debug functions (debug_traceback())
+	- coding guidelines based on the pear ones
+	- unit testing
+	- benchmarking
+		- active: benchmark suit from pear
+		- passive: apache/ab, httperf
+	- profiling
+		- apd
+	- testing of compiler caches (apc)
+	- 
+- using databases, primarily mysql, later support for others
+	- mysql: log_slow_quieres to optimize database access
+- pear packages if possible
+- smarty as template engine
+- documentation based on docbook
+- conforming xHTML 1.1, CSS2, WAI
+- modular structure
+- using cache to optimize performance

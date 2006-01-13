@@ -1,0 +1,46 @@
+/
+web directory
+	/homepagehelper-src
+		library source
+		contains all classes and modules
+	
+		/lib
+			contains all library files (classes)
+			the files are named like the classes: [classname].php
+			if a class has a name containing an "_", there is a directory for the class set
+			for exmaple: MMB_Editor:
+			/mmb
+				- editor.php
+			another example: HPH_Core
+			/hph
+				- core.php
+		
+		/templates
+			global templates
+		
+		/languages
+			global language files
+			/de
+			/en
+		
+		/doc
+			documentation
+	
+	/demo
+		contains demo applications for the different parts
+	
+	/dummy
+		development dummy
+		contains only the very base of a webpage
+		same sturcture as /webpage
+	
+	/webpage
+		directory for the web page
+		it can also be located on the top level
+		the path to the library files can be defined individually
+	
+		/templates
+			overwrites the global templates
+	
+		/languages
+			overwrites the global language files

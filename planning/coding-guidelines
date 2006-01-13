@@ -1,0 +1,73 @@
+Coding Guidelines
+
+These coding guidelines are used for all files of the HomePageHelper.  These coding guidelines are based on the PEAR ones: http://pear.php.net/manual/en/standards.php  In some aspects the HomePageHelper coding guidelines are more precise or differ slightly.  The PEAR coding guidelines were chosen as a base because they are the de facto standard for php code.  Therefore, many php programmers are familiar with them.
+In this guidelines, only the differences and addtions to the PEAR coding guidelines are pointed out.
+
+
+switch
+In switches a code block starts with case and generally ends with break.  Therefore, the case and break key words build up a union:
+switch (condition) {
+	case 'foo':
+		...
+	break;
+	
+	case 'bar':
+		...
+	break;
+}
+
+
+Indenting and Line Length                                                                           
+No Line is longer than 100 characters.
+For Indenting in the front of lines, tabs are used.  For indenting in the middle of a line, spaces are used.
+	example:
+	foreach ($foo as $bar) {
+		if ($bar == 'foo') {
+			$block        = 'related';
+			$assignments  = 'contain';
+			$spaces       = '.';
+			// there are always two spaces after the longest element
+		}
+	}
+For block assignments, the values are indented with spaces.  The value block begins two spaces after the longest element of the left side.
+
+
+Strings
+All strings use ' as delimeter.  There are a few exception:
+- database queries
+- strings that use \n or \t
+
+
+Classes
+Classes are structured the following way:
+- variables in alphabetical order
+- functions in alphabetical order
+
+All files contain a file header using the following as a base:
+<?php
+/**
+ * description of the file
+ * 
+ * @package    HomePageHelper
+ * @category   Core
+ * @author     Michael Müller-Brockhausen <michael@brockhausen.name>
+ * @copyright  2006, Michael Müller-Brockhausen
+ * @link       http://homepagehelper.berlios.de
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version    1.0
+ * @since      1.0
+ */
+
+Classes use the following as a base for a phpdoc comment:
+/**
+ * description
+ * 
+ * @package    HomePageHelper
+ * @category   Core
+ * @author     Michael Müller-Brockhausen <michael@brockhausen.name>
+ * @copyright  2006, Michael Müller-Brockhausen
+ * @link       http://homepagehelper.berlios.de
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version    1.0
+ * @since      1.0
+ */
