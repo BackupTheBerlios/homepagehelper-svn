@@ -38,6 +38,47 @@
 abstract class MMB_Editor
 {
 	/**
+	 * saves all instances of children of MMB_Editor_Field_Button
+	 * fields can be added using {@link MMB_Editor::addButton()}
+	 * the field array can be returned by {@link MMB_Editor::getButtons()}
+	 * single instances can be called using {@link MMB_Editor::getButton()}
+	 * the array has the name of the field as key
+	 * @var     array
+	 * @access  protected
+	 */
+	protected $buttons = array();
+	
+	/**
+	 * indicates wether the configuration of the instance was done and valid
+	 * is set by {@link MMB_Editor::checkConfig()}
+	 * @var     bool
+	 * @access  protected
+	 */
+	protected $configCheck = false;
+	
+	
+	/**
+	 * saves all instances of children of MMB_Editor_Field
+	 * fields can be added using {@link MMB_Editor::addField()}
+	 * the field array can be returned by {@link MMB_Editor::getFields()}
+	 * single instances can be called using {@link MMB_Editor::getField()}
+	 * the array has the name of the field as key
+	 * @var     array
+	 * @access  protected
+	 */
+	protected $fields = array();
+	
+	
+	/**
+	 * saves the method which the form uses
+	 * either 'post' or 'get'
+	 * @var     string
+	 * @access  public
+	 */
+	public $method = '';
+	
+	
+	/**
 	 * saves the script name which is used
 	 * is set by the function {@link MMB_Editor::setScriptName()}
 	 * @var     string
@@ -46,6 +87,122 @@ abstract class MMB_Editor
 	protected $scriptName = '';
 	
 	
+	/**
+	 * saves the title of the form
+	 * @var     string
+	 * @access  public
+	 */
+	public $title = '';
+	
+	
+	
+	/**
+	 * adds a button to {@link MMB_Editor::$buttons}
+	 * @param   object   $object  instance of a child of MMB_Editor_Field_Button
+	 * @access  public
+	 */
+	public function addButton(MMB_Editor_Field_Button $object)
+	{
+		$this->buttons[$object->getName()] = $object;
+	}
+	
+	
+	/**
+	 * adds a field to {@link MMB_Editor::$fields}
+	 * @param   object   $object  instance of a child of MMB_Editor_Field
+	 * @access  public
+	 */
+	public function addField(MMB_Editor_Field $object)
+	{
+		$this->fields[$object->getName()] = $object;
+	}
+	
+	
+	/**
+	 * checks the configuration of the {@link MMB_Editor} instance
+	 * throws a {@link E_MMB_Editor_Invalid_Config}
+	 * 
+	 * ATTENTION: it is highly recommended to redeclare this function
+	 * in a child class
+	 * @access  public
+	 */
+	protected function checkConfig()
+	{
+		if (!$this->scriptName) {
+			throw new E_MMB_Editor_Invalid_Config('No Scriptname set');
+		}
+		if (!$this->title) {
+			throw new E_MMB_Editor_Invalid_Config('No Title set');
+		}
+		if (!$this->method) {
+			$this->method = 'post';
+		}
+		$this->configCheck = true;
+	}
+	
+	
+	/**
+	 * returns a button from {@link MMB_Editor::$buttons}
+	 * @param   string   $name  button name
+	 * @return  object   field
+	 * @access  public
+	 */
+	public function getButton($name)
+	{
+		if (!isset($this->buttons[$name])) {
+			throw new E_MMB_Editor_No_Button;
+		}
+		return $this->buttons[$name];
+	}
+	
+	
+	/**
+	 * returns {@link MMB_Editor::$buttons}
+	 * @return  array    {@link MMB_Editor::$buttons}
+	 * @access  public
+	 */
+	public function getButtons()
+	{
+		return $this->buttons;
+	}
+	
+	
+	/**
+	 * returns a field from {@link MMB_Editor::$fields}
+	 * @param   string   $name  field name
+	 * @return  object   field
+	 * @access  public
+	 */
+	public function getField($name)
+	{
+		if (!isset($this->fields[$name])) {
+			throw new E_MMB_Editor_No_Field;
+		}
+		return $this->fields[$name];
+	}
+	
+	
+	/**
+	 * returns {@link MMB_Editor::$fields}
+	 * @return  array    {@link MMB_Editor::$fields}
+	 * @access  public
+	 */
+	public function getFields()
+	{
+		return $this->fields;
+	}
+	
+	
+	/**
+	 * creates a user readable output for the fields
+	 * @return  string   html code
+	 * @access  public
+	 */
+	public function outputForm()
+	{
+		$this->checkConfig();
+	}
+	
 	
 	/**
 	 * creates the table head
@@ -53,7 +210,8 @@ abstract class MMB_Editor
 	 * @return  bool     returns false if {@link MMB_Editor::$scriptName} already has a value
 	 * @access  public
 	 */
-	public function setScriptName($name) {
+	public function setScriptName($name)
+	{
 		if (!$this->scriptName) {
 			$this->scriptName = $name;
 			return true;
@@ -178,7 +336,8 @@ abstract class MMB_Editor_Field
 	 * @return  string   html code
 	 * @access  public
 	 */
-	public function getAdditoinalAttributes() {
+	public function getAdditoinalAttributes()
+	{
 		 return ' id="'.$this->id.'" ';
 	}
 	
@@ -230,6 +389,17 @@ abstract class MMB_Editor_Field
 	
 	
 	/**
+	 * returns the name of the field stored in {@link MMB_Editor_Field::$name}
+	 * @return  mxied    value
+	 * @access  public
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+	
+	
+	/**
 	 * returns the value of the field as it is needed for example for database entries
 	 * @return  mxied    value
 	 * @access  public
@@ -275,7 +445,7 @@ abstract class MMB_Editor_Field
 	
 	
 	/**
-	 * outputs the input field for edition the field
+	 * outputs the input field for editing the field
 	 * 
 	 * ATTENTION: it is highly recommended to redeclare this function
 	 * in a child class
