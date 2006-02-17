@@ -94,10 +94,10 @@ class MMB_Editor_Field_String extends MMB_Editor_Field_Wrapper
 	protected function validate($value)
 	{
 		if (!is_string((string) $value)) {
-			throw new E_MMB_Editor_Field_Invalid_Value;
+			throw new E_MMB_Editor_Field_Invalid_Value($value);
 		}
 		if (!$this->canBeEmpty && !$value) {
-			throw new E_MMB_Editor_Field_Invalid_Value;
+			throw new E_MMB_Editor_Field_Invalid_Value($value);
 		}
 		return true;
 	}
@@ -246,6 +246,53 @@ class MMB_Editor_Field_Button_Hidden extends MMB_Editor_Field_Button
 	public function __construct($name, $value)
 	{
 		parent::__construct($name, $value, 'hidden');
+	}
+}
+
+
+/**
+ * E_MMB_Editor_Field_Invalid_Value exception
+ * 
+ * this an exception for invalid values set to a field
+ * @package    HomePageHelper
+ * @category   MMB_Editor
+ * @author     Michael Müller-Brockhausen <michael@brockhausen.name>
+ * @copyright  2006, Michael Müller-Brockhausen
+ * @link       http://homepagehelper.berlios.de
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version    1.0
+ * @since      1.0
+ */
+class E_MMB_Editor_Field_Invalid_Value extends E_MMB_Editor
+{
+	/**
+	 * saves the value of the field
+	 * is set by {@link E_MMB_Editor_Field_Invalid_Value::__construct()}
+	 * @var     mixed
+	 * @access  protected
+	 */
+	protected $value = NULL;
+	
+	
+	/**
+	 * creates an E_MMB_Editor_Field_Invalid_Value exception
+	 * @param   string   $value  value
+	 * @access  public
+	 */
+	public function __construct($value)
+	{
+		$this->value = $value;
+	}
+	
+	
+	/**
+	 * returns the value of the field
+	 * @return  mxied    value
+	 * @access  public
+	 */
+	public function getValue()
+	{
+		return $this->value;
 	}
 }
 ?>

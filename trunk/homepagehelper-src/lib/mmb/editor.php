@@ -157,6 +157,17 @@ abstract class MMB_Editor
 	
 	
 	/**
+	 * returns the button names as an array
+	 * @return  array    button names
+	 * @access  public
+	 */
+	public function getButtonNames()
+	{
+		return array_keys($this->buttons);
+	}
+	
+	
+	/**
 	 * returns {@link MMB_Editor::$buttons}
 	 * @return  array    {@link MMB_Editor::$buttons}
 	 * @access  public
@@ -183,6 +194,18 @@ abstract class MMB_Editor
 	
 	
 	/**
+	 * returns an array with all field names
+	 * @return  array    field names
+	 * @access  public
+	 */
+	public function getFieldNames()
+	{
+		return array_keys($this->fields);
+	}
+	
+	
+	
+	/**
 	 * returns {@link MMB_Editor::$fields}
 	 * @return  array    {@link MMB_Editor::$fields}
 	 * @access  public
@@ -190,6 +213,24 @@ abstract class MMB_Editor
 	public function getFields()
 	{
 		return $this->fields;
+	}
+	
+	
+	/**
+	 * handles actions
+	 * checks POST and GET for actions which MMB_Editor can handle automatically
+	 * 
+	 * ATTENTION: it is highly recommended to redeclare this function
+	 * in a child class
+	 * @return  bool     returns true if it handled an action
+	 * @access  public
+	 */
+	public function handleActions()
+	{
+		$done = false;
+		
+		
+		return $done;
 	}
 	
 	
@@ -263,6 +304,13 @@ abstract class MMB_Editor_Field
 	 * @access  protected
 	 */
 	protected $description = '';
+	
+	/**
+	 * saves an exception
+	 * @var     object
+	 * @access  protected
+	 */
+	protected $exception = NULL;
 	
 	/**
 	 * saves the id for the html tag
@@ -366,6 +414,22 @@ abstract class MMB_Editor_Field
 	
 	
 	/**
+	 * returns the {@link MMB_Editor_Field::$exception}
+	 * returns false if no exception is set
+	 * @param   object   exception object
+	 * @access  public
+	 */
+	public function getException()
+	{
+		if ($this->exception) {
+			return $this->exception;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	/**
 	 * return the id of the field as it is needed for html tag output
 	 * @return  string   id
 	 * @access  public
@@ -401,12 +465,19 @@ abstract class MMB_Editor_Field
 	
 	/**
 	 * returns the value of the field as it is needed for example for database entries
+	 * @param   bool     $ignoreException  if set on true and the field has an exception,
+	 *                        the value of the field is returned instead of the value of the
+	 *                        exception
 	 * @return  mxied    value
 	 * @access  public
 	 */
-	public function getValue()
+	public function getValue($ignoreException = false)
 	{
-		return $this->value;
+		if (!$ignoreException && $this->exception) {
+			return $this->exception->getValue();
+		} else {
+			return $this->value;
+		}
 	}
 	
 	
@@ -473,9 +544,20 @@ abstract class MMB_Editor_Field
 	
 	
 	/**
+	 * sets an exception
+	 * @param   object   $exception  exception object
+	 * @access  public
+	 */
+	public function setException(E_MMB_Editor $exception)
+	{
+		$this->exception = $exception;
+	}
+	
+	
+	/**
 	 * sets the id of the field
 	 * @return  bool     returns true if the value was validated
-	 * @access  public
+	 * @access  protected
 	 */
 	protected function setID()
 	{
@@ -527,5 +609,23 @@ abstract class MMB_Editor_Field
 	{
 		// contains no code in an abstract class
 	}
+}
+
+/**
+ * wrapper class for an MMB_Editor exception
+ * 
+ * @package    HomePageHelper
+ * @category   MMB_Editor
+ * @author     Michael Müller-Brockhausen <michael@brockhausen.name>
+ * @copyright  2006, Michael Müller-Brockhausen
+ * @link       http://homepagehelper.berlios.de
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version    1.0
+ * @since      1.0
+ * @abstract
+ */
+abstract class E_MMB_Editor extends Exception /*  E_Wrapper */
+{
+	
 }
 ?>

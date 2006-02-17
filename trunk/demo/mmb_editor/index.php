@@ -81,10 +81,55 @@ abstract class MMB_Editor_Field_Wrapper extends MMB_Editor_Field
 	{
 		parent::checkConfig();
 		if (!count($this->buttons)) {
-			$this->addButton(new MMB_Editor_Field_Button_Submit);
+			// adds a submit and a reset button if no other buttns are set
+			$this->addButton(new MMB_Editor_Field_Button_Submit('edit'));
 			$this->addButton(new MMB_Editor_Field_Button_Reset);
 		}
 	}
+	
+	
+	/**
+	 * handles actions
+	 * checks POST and GET for actions which MMB_Editor_Wrapper can handle automatically
+	 * @return  bool     returns true if it handled an action
+	 * @access  public
+	 */
+	public function handleActions()
+	{
+		$done = false;
+		
+		if (isset($_POST['edit'])) {
+			// handles a form created by MMB_Editor_Wrapper::outputForm()
+			$this->handleEdit();
+			$done = true;
+		}
+		
+		if (!$done) {
+			$done = parent::handleActions();
+		}
+		return $done;
+	}
+	
+	
+	/**
+	 * handles a form created by {@link MMB_Editor_Wrapper::outputForm()
+	 * @access  public
+	 */
+	public function handleEdit()
+	{
+		foreach ($this->getFieldNames() as $name) {
+			try {
+				$this->getField($name)->setValue($_POST[$name]);
+			} catch (E_MMB_Editor_Field_Invalid_Value $exception) {
+				$this->getField($name)->setException($exception);
+			}
+		}
+		
+		foreach ($this->getButtonNames() as $name) {
+			echo $name;
+		}
+	}
+	
 	
 	
 	/**
@@ -98,15 +143,32 @@ abstract class MMB_Editor_Field_Wrapper extends MMB_Editor_Field
 		echo '<form action="'.$this->scriptName.'" method="'.$this->method.'">';
 		echo '<table>';
 		echo '<tr><th colspan="2">'.$this->title.'</th></tr>';
+		
 		foreach ($this->fields as $field) {
-			echo '<tr><td>'.$field->outputDescription().':<br />'.$field->outputLongDescription().'</td>';
-			echo '<td>'.$field->outputInput().'</td></tr>';
+			$exception = $field->getException();
+			echo '<tr><td>';
+			if ($exception) {
+				echo '<span style="color:#FF0000;>';
+			}
+			echo $field->outputDescription();
+			echo ':<br />';
+			echo $field->outputLongDescription();
+			if ($exception) {
+				echo '</span>';
+			}
+			echo '</td>';
+			echo '<td>';
+			echo $field->outputInput();
+			echo '</td></tr>';
 		}
+		
 		echo '<tr><td>&nbsp;</td><td>';
+		
 		foreach ($this->buttons as $button) {
 			echo $button->outputInput();
 			echo ' ';
 		}
+		
 		echo '</td></tr>';
 		echo '</table>';
 		echo '</form>';
@@ -129,8 +191,11 @@ $string2->setValue('<b>test2</b>');
 $e->addField($string2);
 
 $string3 = new MMB_Editor_Field_String('test3', 'Test3', 'Dies ist ein Testfeld2');
+$string3->canBeEmpty = false;
 $e->addField($string3);
 $e->getField('test3')->setValue('set by using MMB_Editor::getField()');
+
+$e->handleActions();
 
 echo $e->outputForm();
 ?>
