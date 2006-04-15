@@ -75,7 +75,7 @@ abstract class MMB_Editor
 	 * @var     string
 	 * @access  public
 	 */
-	public $method = '';
+	protected $method = '';
 	
 	
 	/**
@@ -92,7 +92,7 @@ abstract class MMB_Editor
 	 * @var     string
 	 * @access  public
 	 */
-	public $title = '';
+	protected $title = '';
 	
 	
 	
@@ -101,7 +101,7 @@ abstract class MMB_Editor
 	 * @param   object   $object  instance of a child of MMB_Editor_Field_Button
 	 * @access  public
 	 */
-	public function addButton(MMB_Editor_Field_Button $object)
+	protected function addButton(MMB_Editor_Field_Button $object)
 	{
 		$this->buttons[$object->getName()] = $object;
 	}
@@ -112,7 +112,7 @@ abstract class MMB_Editor
 	 * @param   object   $object  instance of a child of MMB_Editor_Field
 	 * @access  public
 	 */
-	public function addField(MMB_Editor_Field $object)
+	protected function addField(MMB_Editor_Field $object)
 	{
 		$this->fields[$object->getName()] = $object;
 	}
@@ -128,6 +128,9 @@ abstract class MMB_Editor
 	 */
 	protected function checkConfig()
 	{
+		if ($this->configCheck) {
+			return;
+		}
 		if (!$this->scriptName) {
 			throw new E_MMB_Editor_Invalid_Config('No Scriptname set');
 		}
@@ -227,6 +230,7 @@ abstract class MMB_Editor
 	 */
 	public function handleActions()
 	{
+		$this->checkConfig();
 		$done = false;
 		
 		
@@ -259,6 +263,50 @@ abstract class MMB_Editor
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * sets a field value
+	 * @param   string   $name  field name
+	 * @access  private
+	 */
+	private function __set($name, $value)
+	{
+		$this->fields[$name]->setValue($value);
+	}
+	
+	/**
+	 * returns a field value
+	 * @param   string   $name  field name
+	 * @return  mixed    field value
+	 * @access  private
+	 */
+	private function __get($name)
+	{
+		if (isset($this->fields[$name])) {
+			return $this->fields[$name]->getValue();
+		}
+	}
+	
+	/**
+	 * returns if a field exists
+	 * @param   string   $name  field name
+	 * @return  bool     exists or not
+	 * @access  private
+	 */
+	private function __isset($name)
+	{
+		return isset($this->fields[$name]);
+	}
+	
+	/**
+	 * unsets a field value
+	 * @param   string   $name  field name
+	 * @access  private
+	 */
+	private function _unset($name)
+	{
+		$this->fields[$name]->setValue($this->fields[$name]->getDefaultValue());
 	}
 }
 

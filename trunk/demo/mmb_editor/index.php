@@ -15,6 +15,7 @@
 define('HPH_DIR', '/srv/www/hph/homepagehelper-src');
 
 require_once HPH_DIR.'/lib/mmb/editor.php';
+abstract class MMB_Editor_Wrapper extends MMB_Editor {}
 abstract class MMB_Editor_Field_Wrapper extends MMB_Editor_Field
 {
 	/**
@@ -70,115 +71,10 @@ abstract class MMB_Editor_Field_Wrapper extends MMB_Editor_Field
 	}
 }
 
-/* abstract */ class MMB_Editor_Wrapper extends MMB_Editor
-{
-	/**
-	 * checks the configuration of the {@link MMB_Editor_Wrapper} instance
-	 * throws a {@link E_MMB_Editor_Invalid_Config}
-	 * @access  public
-	 */
-	protected function checkConfig()
-	{
-		parent::checkConfig();
-		if (!count($this->buttons)) {
-			// adds a submit and a reset button if no other buttns are set
-			$this->addButton(new MMB_Editor_Field_Button_Submit('edit'));
-			$this->addButton(new MMB_Editor_Field_Button_Reset);
-		}
-	}
-	
-	
-	/**
-	 * handles actions
-	 * checks POST and GET for actions which MMB_Editor_Wrapper can handle automatically
-	 * @return  bool     returns true if it handled an action
-	 * @access  public
-	 */
-	public function handleActions()
-	{
-		$done = false;
-		
-		if (isset($_POST['edit'])) {
-			// handles a form created by MMB_Editor_Wrapper::outputForm()
-			$this->handleEdit();
-			$done = true;
-		}
-		
-		if (!$done) {
-			$done = parent::handleActions();
-		}
-		return $done;
-	}
-	
-	
-	/**
-	 * handles a form created by {@link MMB_Editor_Wrapper::outputForm()
-	 * @access  public
-	 */
-	public function handleEdit()
-	{
-		foreach ($this->getFieldNames() as $name) {
-			try {
-				$this->getField($name)->setValue($_POST[$name]);
-			} catch (E_MMB_Editor_Field_Invalid_Value $exception) {
-				$this->getField($name)->setException($exception);
-			}
-		}
-		
-		foreach ($this->getButtonNames() as $name) {
-			echo $name;
-		}
-	}
-	
-	
-	
-	/**
-	 * creates a user readable output for the fields
-	 * @return  string   html code
-	 * @access  public
-	 */
-	public function outputForm()
-	{
-		parent::outputForm();
-		echo '<form action="'.$this->scriptName.'" method="'.$this->method.'">';
-		echo '<table>';
-		echo '<tr><th colspan="2">'.$this->title.'</th></tr>';
-		
-		foreach ($this->fields as $field) {
-			$exception = $field->getException();
-			echo '<tr><td>';
-			if ($exception) {
-				echo '<span style="color:#FF0000;>';
-			}
-			echo $field->outputDescription();
-			echo ':<br />';
-			echo $field->outputLongDescription();
-			if ($exception) {
-				echo '</span>';
-			}
-			echo '</td>';
-			echo '<td>';
-			echo $field->outputInput();
-			echo '</td></tr>';
-		}
-		
-		echo '<tr><td>&nbsp;</td><td>';
-		
-		foreach ($this->buttons as $button) {
-			echo $button->outputInput();
-			echo ' ';
-		}
-		
-		echo '</td></tr>';
-		echo '</table>';
-		echo '</form>';
-	}
-}
-
-
 require_once HPH_DIR.'/lib/mmb/editor/fields.php';
-
-$e = new MMB_Editor_Wrapper();
+require_once HPH_DIR.'/lib/mmb/editor/html.php';
+/*
+$e = new MMB_Editor_HTML();
 $e->setScriptName('index.php');
 $e->title = 'Test-Form';
 
@@ -191,9 +87,27 @@ $string2->setValue('<b>test2</b>');
 $e->addField($string2);
 
 $string3 = new MMB_Editor_Field_String('test3', 'Test3', 'Dies ist ein Testfeld2');
-$string3->canBeEmpty = false;
+$string3->required = true;
 $e->addField($string3);
 $e->getField('test3')->setValue('set by using MMB_Editor::getField()');
+*/
+
+class MMB_Editor_Test extends MMB_Editor_HTML {
+	public function __construct()
+	{
+		$this->setScriptName('index.php');
+		$this->title = 'Test-Form';
+		$this->addField(new MMB_Editor_Field_String('test', 'Test', 'Dies ist ein Testfeld'));
+		$this->addField(new MMB_Editor_Field_String('test2', 'Test2', 'Dies ist ein Testfeld2'));
+		$string3 = new MMB_Editor_Field_String('test3', 'Test3', 'Dies ist ein Testfeld2');
+		$string3->required = true;
+		$this->addField($string3);
+	}
+}
+
+$e = new MMB_Editor_Test;
+
+$e->test = 'Test';
 
 $e->handleActions();
 

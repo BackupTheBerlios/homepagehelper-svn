@@ -36,13 +36,6 @@ class MMB_Editor_Field_String extends MMB_Editor_Field_Wrapper
 	 */
 	public $decodeHTML = false;
 	
-	/**
-	 * this option determines whether the string can be empty or not
-	 * @var     bool
-	 * @access  public
-	 */
-	public $canBeEmpty = true;
-	
 	
 	/**
 	 * outputs the value of the field in a user readable way
@@ -96,7 +89,7 @@ class MMB_Editor_Field_String extends MMB_Editor_Field_Wrapper
 		if (!is_string((string) $value)) {
 			throw new E_MMB_Editor_Field_Invalid_Value($value);
 		}
-		if (!$this->canBeEmpty && !$value) {
+		if ($this->required && !$value) {
 			throw new E_MMB_Editor_Field_Invalid_Value($value);
 		}
 		return true;
@@ -276,10 +269,11 @@ class E_MMB_Editor_Field_Invalid_Value extends E_MMB_Editor
 	
 	/**
 	 * creates an E_MMB_Editor_Field_Invalid_Value exception
-	 * @param   string   $value  value
+	 * @param   string   $value     value
+	 * @param   string   $message   message
 	 * @access  public
 	 */
-	public function __construct($value)
+	public function __construct($value, $message = '')
 	{
 		$this->value = $value;
 	}
